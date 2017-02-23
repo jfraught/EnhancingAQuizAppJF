@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     
     var gameSound: SystemSoundID = 0
     
+    // A dictionary that should be aa array of objects: class called TriviaQuestion and in MVC format this should be in a TriviaProvider file. 
     let trivia: [[String : String]] = [
         ["Question": "Only female koalas can whistle", "Answer": "False"],
         ["Question": "Blue whales are technically whales", "Answer": "True"],
