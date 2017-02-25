@@ -8,17 +8,17 @@
 
 import Foundation
 
-struct TriviaController {
+class Trivia {
 
     let questionsArray: [TriviaQuestion] = [
-        TriviaQuestion(question: "LeBron James is the best player in the world.", answer: "True"),
-        TriviaQuestion(question: "Shaq played for the Spurs.", answer: "False"),
-        TriviaQuestion(question: "Steve Nash was a 2 time MVP.", answer: "True"),
-        TriviaQuestion(question: "The Warriors blew a 3-1 lead.", answer: "True"),
-        TriviaQuestion(question: "Kobe's highest scoring game was 81 points.", answer: "True"),
-        TriviaQuestion(question: "The Utah Jazz used to be the Utah Bullets.", answer: "False"),
-        TriviaQuestion(question: "Michael Jordan played at least one game against LeBron James.", answer: "False"),
-        TriviaQuestion(question: "Charles Barkley is friends with Kenny Smith.", answer: "True")
+       TriviaQuestion(question: "LeBron James is the _ best player of all time.", option1: "1st", option2: "2nd", option3: "3rd", option4: "4th"),
+       TriviaQuestion(question: "Shaq played for which of these teams?", option1: "Miamia Heat", option2: "LA Clippers", option3: "Las Vegas Sharks", option4: "Utah Jazz"),
+       TriviaQuestion(question: "Steve Nash was MVP _ times.", option1: "1", option2: "2", option3: "3", option4: "4"),
+       TriviaQuestion(question: "Damian Lillard went to which school in Utah?", option1: "University of Utah", option2: "Weber State University", option3: "Brigham Young University", option4: "Southern Utah University. "),
+       TriviaQuestion(question: <#T##String#>, option1: <#T##String#>, option2: <#T##String#>, option3: <#T##String#>, option4: <#T##String#>),
+       TriviaQuestion(question: <#T##String#>, option1: <#T##String#>, option2: <#T##String#>, option3: <#T##String#>, option4: <#T##String#>),
+       TriviaQuestion(question: <#T##String#>, option1: <#T##String#>, option2: <#T##String#>, option3: <#T##String#>, option4: <#T##String#>),
+       TriviaQuestion(question: <#T##String#>, option1: <#T##String#>, option2: <#T##String#>, option3: <#T##String#>, option4: <#T##String#>),
+       TriviaQuestion(question: <#T##String#>, option1: <#T##String#>, option2: <#T##String#>, option3: <#T##String#>, option4: <#T##String#>)
     ]
-
 }
