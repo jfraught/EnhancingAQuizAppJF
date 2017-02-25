@@ -68,20 +68,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func checkAnswer(_ sender: UIButton) {
-        // Increment the questions asked counter
-        questionsAsked += 1
-        
-        let selectedQuestionDict = trivia[indexOfSelectedQuestion]
-        let correctAnswer = selectedQuestionDict["Answer"]
-        
-        if (sender === trueButton &&  correctAnswer == "True") || (sender === falseButton && correctAnswer == "False") {
-            correctQuestions += 1
-            questionField.text = "Correct!"
-        } else {
-            questionField.text = "Sorry, wrong answer!"
-        }
-        
-        loadNextRoundWithDelay(seconds: 2)
+      
     }
     
     func nextRound() {
