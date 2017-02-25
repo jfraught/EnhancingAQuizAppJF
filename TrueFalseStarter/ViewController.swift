@@ -19,7 +19,7 @@ class ViewController: UIViewController {
     
     var gameSound: SystemSoundID = 0
     
-    let trivia = Trivia()
+    let trivia = Trivia().questionsArray
     
     // A dictionary that should be aa array of objects: class called TriviaQuestion and in MVC format this should be in a TriviaProvider file. 
    
@@ -46,17 +46,19 @@ class ViewController: UIViewController {
     }
     
     func displayQuestion() {
-        indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: )
+        indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: trivia.count)
         let questionDictionary = trivia[indexOfSelectedQuestion]
-        questionField.text = questionDictionary["Question"]
+        questionField.text = questionDictionary.question
         playAgainButton.isHidden = true
         
     }
     
     func displayScore() {
         // Hide the answer buttons
-        trueButton.isHidden = true
-        falseButton.isHidden = true
+        option1Button.isHidden = true
+        option2Button.isHidden = true
+        option3Button.isHidden = true
+        option4Button.isHidden = true
         
         // Display play again button
         playAgainButton.isHidden = false
