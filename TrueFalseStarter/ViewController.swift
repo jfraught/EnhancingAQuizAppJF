@@ -49,9 +49,15 @@ class ViewController: UIViewController {
         indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: trivia.count)
         let questionDictionary = trivia[indexOfSelectedQuestion]
         questionField.text = questionDictionary.question
+        option1Button.setTitle(questionDictionary.option1, for: .normal)
+        option2Button.setTitle(questionDictionary.option2, for: .normal)
+        option3Button.setTitle(questionDictionary.option3, for: .normal)
+        option4Button.setTitle(questionDictionary.option4, for: .normal)
         playAgainButton.isHidden = true
         
     }
+    
+    
     
     func displayScore() {
         // Hide the answer buttons
@@ -68,7 +74,75 @@ class ViewController: UIViewController {
     }
     
     @IBAction func checkAnswer(_ sender: UIButton) {
+        let question = trivia[indexOfSelectedQuestion].question
+        
+       // Sorting correct answers from false maybe I should do this in model?
+        
+        if question == "LeBron James is the _ best player of all time." {
+            if sender == option1Button {
+                questionField.text = "Correct!"
+            } else if sender == option2Button || sender == option3Button || sender == option4Button {
+               questionField.text = "Sorry! Wrong answer!"
+            }
+        } else if question == "Shaq played for which of these teams?" {
+            if sender == option1Button {
+                questionField.text = "Correct!"
+            } else if sender == option2Button || sender == option3Button || sender == option4Button {
+                questionField.text = "Sorry! Wrong answer!"
+            }
+        } else if question == "Steve Nash was MVP _ times." {
+            if sender == option2Button {
+                questionField.text = "Correct!"
+            } else if sender == option1Button || sender == option3Button || sender == option4Button {
+                questionField.text = "Sorry! Wrong answer!"
+            }
+        } else if question == "Damian Lillard went to which school in Utah?" {
+            if sender == option2Button {
+                questionField.text = "Correct!"
+            } else if sender == option1Button || sender == option3Button || sender == option4Button {
+                questionField.text = "Sorry! Wrong answer!"
+            }
+        } else if question == "Jimmer Fredette's highest scoring game is _." {
+            if sender == option1Button {
+                questionField.text = "Correct!"
+            } else if sender == option2Button || sender == option3Button || sender == option4Button {
+                questionField.text = "Sorry! Wrong answer!"
+            }
+        } else if question == "What college did Michael Jordan play for?" {
+            if sender == option3Button {
+                questionField.text = "Correct!"
+            } else if sender == option1Button || sender == option2Button || sender == option4Button {
+                questionField.text = "Sorry! Wrong answer!"
+            }
+        } else if question == "The Utah Jazz have won how many championships?" {
+            if sender == option4Button {
+                questionField.text = "Correct!"
+            } else if sender == option1Button || sender == option2Button || sender == option3Button {
+                questionField.text = "Sorry! Wrong answer!"
+            }
+        } else if question == "Gordon Hayward played for which college?" {
+            if sender == option2Button {
+                questionField.text = "Correct!"
+            } else if sender == option1Button || sender == option3Button || sender == option4Button {
+                questionField.text = "Sorry! Wrong answer!"
+            }
+        } else if question == "Kobe Bryant has _ rings." {
+            if sender == option4Button {
+                questionField.text = "Correct!"
+            } else if sender == option1Button || sender == option2Button || sender == option3Button {
+                questionField.text = "Sorry! Wrong answer!"
+            }
+        }
+        
       
+        loadNextRoundWithDelay(seconds: 2)
+        
+        
+        
+        //Say whether or not that answer is right or not and keep track of how many are right and wrong
+        
+    
+        
     }
     
     func nextRound() {
