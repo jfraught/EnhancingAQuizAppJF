@@ -19,6 +19,9 @@ class ViewController: UIViewController {
     var questionsAskedArray: [Int] = []
     
     
+    @IBOutlet weak var option2Constraint: NSLayoutConstraint!
+    @IBOutlet weak var option3Constraint: NSLayoutConstraint!
+    
     var gameSound: SystemSoundID = 0
     
     let trivia = Trivia().questionsArray
@@ -50,10 +53,19 @@ class ViewController: UIViewController {
     }
     
     func displayQuestion() {
+       
+        self.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0, animations: {
+            self.option2Constraint.constant = 30
+            self.view.layoutIfNeeded()
+        })
+        UIView.animate(withDuration: 0, animations: {
+            self.option3Constraint.constant = 30
+            self.view.layoutIfNeeded()
+        })
+       
         
-        print(questionsAskedArray)
-        
-        // firstRound isEmpty then do it without checking array
+    // firstRound isEmpty then do it without checking array
        
         if questionsAskedArray.isEmpty {
         
@@ -63,13 +75,35 @@ class ViewController: UIViewController {
             
             let questionDictionary = trivia[indexOfSelectedQuestion]
             
+            // If has 3 options
+            if questionDictionary.option4 == "No answer" {
+                questionField.text = questionDictionary.question
+                option1Button.setTitle(questionDictionary.option1, for: .normal)
+                option2Button.setTitle(questionDictionary.option2, for: .normal)
+                option3Button.setTitle(questionDictionary.option3, for: .normal)
+                option4Button.setTitle(questionDictionary.option4, for: .normal)
+                
+                self.view.layoutIfNeeded()
+                UIView.animate(withDuration: 0, animations: {
+                  self.option2Constraint.constant = 40
+                    self.view.layoutIfNeeded()
+                })
+                UIView.animate(withDuration: 0, animations: {
+                    self.option3Constraint.constant = 40
+                    self.view.layoutIfNeeded()
+                })
+                option4Button.isHidden = true
+                
+            } else {
+                
             questionField.text = questionDictionary.question
             option1Button.setTitle(questionDictionary.option1, for: .normal)
             option2Button.setTitle(questionDictionary.option2, for: .normal)
             option3Button.setTitle(questionDictionary.option3, for: .normal)
             option4Button.setTitle(questionDictionary.option4, for: .normal)
+            option4Button.isHidden = false
             playAgainButton.isHidden = true
-        
+            }
        // secondThroughEndRounds isEmpty == false then check array and go from there.
         
         } else if questionsAskedArray.isEmpty == false {
@@ -82,23 +116,49 @@ class ViewController: UIViewController {
             questionsAskedArray.append(indexOfSelectedQuestion)
             
             let questionDictionary = trivia[indexOfSelectedQuestion]
+            // If has 3 options
+            if questionDictionary.option4 == "No answer" {
+                questionField.text = questionDictionary.question
+                option1Button.setTitle(questionDictionary.option1, for: .normal)
+                option2Button.setTitle(questionDictionary.option2, for: .normal)
+                option3Button.setTitle(questionDictionary.option3, for: .normal)
+                option4Button.setTitle(questionDictionary.option4, for: .normal)
+                
+                self.view.layoutIfNeeded()
+                UIView.animate(withDuration: 0, animations: {
+                    self.option2Constraint.constant = 40
+                    self.view.layoutIfNeeded()
+                })
+                UIView.animate(withDuration: 0, animations: {
+                    self.option3Constraint.constant = 40
+                    self.view.layoutIfNeeded()
+                })
+                option4Button.isHidden = true
+                
+                
+            } else {
             
-            questionField.text = questionDictionary.question
+                questionField.text = questionDictionary.question
             option1Button.setTitle(questionDictionary.option1, for: .normal)
             option2Button.setTitle(questionDictionary.option2, for: .normal)
             option3Button.setTitle(questionDictionary.option3, for: .normal)
             option4Button.setTitle(questionDictionary.option4, for: .normal)
+            option4Button.isHidden = false
             playAgainButton.isHidden = true
+            }
         }
     }
+    
+    
     
     func displayScore() {
         // Hide the answer buttons
         option1Button.isHidden = true
         option2Button.isHidden = true
         option3Button.isHidden = true
-        option4Button.isHidden = true
-        
+        if option4Button.isHidden != true  {
+            option4Button.isHidden = true
+        }
         // Display play again button
         playAgainButton.isHidden = false
         
@@ -113,7 +173,7 @@ class ViewController: UIViewController {
     @IBAction func checkAnswer(_ sender: UIButton) {
         
         let question = trivia[indexOfSelectedQuestion].question
-        
+        let triviaAnswers = trivia[indexOfSelectedQuestion]
        // Sorting correct answers from false maybe I should do this in model?
        
         if question == "LeBron James is the _ best player of all time." {
@@ -121,63 +181,69 @@ class ViewController: UIViewController {
                 questionField.text = "Correct!"
                 correctQuestions += 1
             } else if sender == option2Button || sender == option3Button || sender == option4Button {
-               questionField.text = "Sorry! Wrong answer!"
+               questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
             }
         } else if question == "Shaq played for which of these teams?" {
             if sender == option1Button {
                 questionField.text = "Correct!"
                 correctQuestions += 1
             } else if sender == option2Button || sender == option3Button || sender == option4Button {
-                questionField.text = "Sorry! Wrong answer!"
+                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
             }
         } else if question == "Steve Nash was MVP _ times." {
             if sender == option2Button {
                 questionField.text = "Correct!"
                 correctQuestions += 1
             } else if sender == option1Button || sender == option3Button || sender == option4Button {
-                questionField.text = "Sorry! Wrong answer!"
+               questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"
             }
         } else if question == "Damian Lillard went to which school in Utah?" {
             if sender == option2Button {
                 questionField.text = "Correct!"
                 correctQuestions += 1
             } else if sender == option1Button || sender == option3Button || sender == option4Button {
-                questionField.text = "Sorry! Wrong answer!"
+                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"
             }
         } else if question == "Jimmer Fredette's highest scoring game is _." {
             if sender == option1Button {
                 questionField.text = "Correct!"
                 correctQuestions += 1
             } else if sender == option2Button || sender == option3Button || sender == option4Button {
-                questionField.text = "Sorry! Wrong answer!"
+                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
             }
         } else if question == "What college did Michael Jordan play for?" {
             if sender == option3Button {
                 questionField.text = "Correct!"
                 correctQuestions += 1
             } else if sender == option1Button || sender == option2Button || sender == option4Button {
-                questionField.text = "Sorry! Wrong answer!"
+                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option3)!"
             }
         } else if question == "The Utah Jazz have won how many championships?" {
             if sender == option4Button {
                 questionField.text = "Correct!"
                 correctQuestions += 1
             } else if sender == option1Button || sender == option2Button || sender == option3Button {
-                questionField.text = "Sorry! Wrong answer!"
+                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option4)!"
             }
         } else if question == "Gordon Hayward played for which college?" {
             if sender == option2Button {
                 questionField.text = "Correct!"
                 correctQuestions += 1
             } else if sender == option1Button || sender == option3Button || sender == option4Button {
-                questionField.text = "Sorry! Wrong answer!"
-            }
+                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"            }
         } else if question == "Kobe Bryant has _ rings." {
             if sender == option4Button {
                 questionField.text = "Correct!"
                 correctQuestions += 1
             } else if sender == option1Button || sender == option2Button || sender == option3Button {
-                questionField.text = "Sorry! Wrong answer!"
+                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option4)!"
+            }
+        } else if question == "Who is the best player in the world right now?" {
+            if sender == option3Button {
+                questionField.text = "Correct!"
+                correctQuestions += 1
+            } else if sender == option1Button || sender == option2Button {
+                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option3)!"
             }
         } else {
             return
