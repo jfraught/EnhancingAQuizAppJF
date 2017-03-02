@@ -17,34 +17,38 @@ class ViewController: UIViewController {
     var correctQuestions = 0
     var indexOfSelectedQuestion: Int = 0
     var questionsAskedArray: [Int] = []
-    
-    
+    var count = 15
+    var isLightningRound = false
+    var gameSound: SystemSoundID = 0
+    let trivia = Trivia().questionsArray
+
     @IBOutlet weak var option2Constraint: NSLayoutConstraint!
     @IBOutlet weak var option3Constraint: NSLayoutConstraint!
-    
-    var gameSound: SystemSoundID = 0
-    
-    let trivia = Trivia().questionsArray
-    
-    
-    // A dictionary that should be aa array of objects: class called TriviaQuestion and in MVC format this should be in a TriviaProvider file. 
-   
-    
     @IBOutlet weak var questionField: UILabel!
     @IBOutlet weak var option1Button: UIButton!
     @IBOutlet weak var option2Button: UIButton!
     @IBOutlet weak var option3Button: UIButton!
     @IBOutlet weak var option4Button: UIButton!
     @IBOutlet weak var playAgainButton: UIButton!
+    @IBOutlet weak var countDownLabel: UILabel!
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         loadGameStartSound()
         // Start game
         playGameStartSound()
         displayQuestion()
+        if isLightningRound == true {
+        var _ = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCounter), userInfo: nil, repeats: true)
         
+        }
+    }
+    
+    func updateCounter() {
+        if count > 0 {
+            count -= 1
+        }
+        countDownLabel.text = "\(count)"
     }
 
     override func didReceiveMemoryWarning() {
