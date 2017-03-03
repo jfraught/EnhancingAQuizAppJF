@@ -33,7 +33,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NRD-8e-FNh">
+                            <button opaque="NO" contentMode="scaleToFill" restorationIdentifier="normalModeLabel" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NRD-8e-FNh">
                                 <rect key="frame" x="37.5" y="308" width="300" height="50"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.47450980390000003" blue="0.58823529409999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
@@ -43,10 +43,11 @@
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Normal Mode"/>
                                 <connections>
-                                    <segue destination="BYZ-38-t0r" kind="show" id="jOp-85-pgt"/>
+                                    <action selector="normalTapped:" destination="UND-PU-1Pu" eventType="touchUpInside" id="YZt-5a-MFA"/>
+                                    <segue destination="BYZ-38-t0r" kind="show" identifier="normalModeSegue" id="jOp-85-pgt"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tTe-Z1-K8i">
+                            <button opaque="NO" contentMode="scaleToFill" restorationIdentifier="lightningRoundLabel" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tTe-Z1-K8i">
                                 <rect key="frame" x="37" y="388" width="300" height="50"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.47450980390000003" blue="0.58823529409999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
@@ -56,6 +57,7 @@
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Lightning Round"/>
                                 <connections>
+                                    <action selector="lightningTapped:" destination="UND-PU-1Pu" eventType="touchUpInside" id="A6d-7m-tp5"/>
                                     <segue destination="BYZ-38-t0r" kind="show" identifier="lightningRoundSegue" id="NRs-Ks-VCE"/>
                                 </connections>
                             </button>
@@ -122,9 +124,9 @@
                                     <constraint firstAttribute="width" constant="300" id="KlC-qn-Nqy"/>
                                     <constraint firstAttribute="height" constant="50" id="OdB-1X-D8c"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Play Again"/>
+                                <state key="normal" title="Play Normal Round"/>
                                 <connections>
                                     <action selector="playAgain" destination="BYZ-38-t0r" eventType="touchUpInside" id="klz-B2-JAN"/>
                                 </connections>
@@ -140,6 +142,7 @@
                                 <state key="normal" title="Option 4"/>
                                 <connections>
                                     <action selector="checkAnswer:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eRZ-ni-MCO"/>
+                                    <action selector="playLightningRound:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7aU-U3-R0a"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j3t-To-RzO">
@@ -165,8 +168,8 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Count Down Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ssR-uN-TmU">
-                                <rect key="frame" x="117" y="51" width="141" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="15" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ssR-uN-TmU">
+                                <rect key="frame" x="178.5" y="51" width="18" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -181,12 +184,12 @@
                             <constraint firstItem="ssR-uN-TmU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Ido-D6-DlT"/>
                             <constraint firstItem="I3V-ih-1Ky" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="JXo-4B-HQc"/>
                             <constraint firstItem="J1V-MS-ECi" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Sz1-GQ-Mvw"/>
-                            <constraint firstItem="rMT-HB-xyD" firstAttribute="top" secondItem="j3t-To-RzO" secondAttribute="bottom" constant="30" id="TeJ-8s-R9W"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="K17-uy-MvB" secondAttribute="bottom" constant="101" id="W6y-p8-vIf"/>
                             <constraint firstItem="K17-uy-MvB" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="dOW-A9-wye"/>
                             <constraint firstItem="j3t-To-RzO" firstAttribute="top" secondItem="AS4-HX-g9f" secondAttribute="bottom" constant="30" id="iSi-sM-J9j"/>
                             <constraint firstItem="I3V-ih-1Ky" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="60" id="kyK-tk-mZP"/>
                             <constraint firstItem="J1V-MS-ECi" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="180" id="oY8-Xt-q4W"/>
+                            <constraint firstItem="K17-uy-MvB" firstAttribute="top" secondItem="rMT-HB-xyD" secondAttribute="bottom" constant="26" id="uRW-Dj-RAz"/>
                             <constraint firstItem="j3t-To-RzO" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="wU3-aY-tfE"/>
                         </constraints>
                     </view>
@@ -205,10 +208,10 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="119" y="131"/>
+            <point key="canvasLocation" x="-76" y="131"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="NRs-Ks-VCE"/>
+        <segue reference="jOp-85-pgt"/>
     </inferredMetricsTieBreakers>
 </document>

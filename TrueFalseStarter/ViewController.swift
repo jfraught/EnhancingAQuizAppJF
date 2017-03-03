@@ -12,16 +12,21 @@ import AudioToolbox
 
 class ViewController: UIViewController {
     
+    // MARK: Properties
+    
     let questionsPerRound = Trivia().questionsArray.count
     var questionsAsked = 0
     var correctQuestions = 0
     var indexOfSelectedQuestion: Int = 0
     var questionsAskedArray: [Int] = []
-    var count = 15
-    var isLightningRound = false
+    var count = 16
     var gameSound: SystemSoundID = 0
+    var wrongAnswerSound: SystemSoundID = 0
+    var rightSound: SystemSoundID = 0
     let trivia = Trivia().questionsArray
-
+    var recievedLightningRoundOn = false
+    var timer: Timer?
+    
     @IBOutlet weak var option2Constraint: NSLayoutConstraint!
     @IBOutlet weak var option3Constraint: NSLayoutConstraint!
     @IBOutlet weak var questionField: UILabel!
@@ -32,44 +37,62 @@ class ViewController: UIViewController {
     @IBOutlet weak var playAgainButton: UIButton!
     @IBOutlet weak var countDownLabel: UILabel!
     
+    
+    // Here I am setting up the timer to run in viewDidLoad
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadGameStartSound()
+        
         // Start game
+        
         playGameStartSound()
         displayQuestion()
-        if isLightningRound == true {
-        var _ = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCounter), userInfo: nil, repeats: true)
         
+        // Timer logic
+        
+        if recievedLightningRoundOn == true && option1Button.isHidden == false {
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCounter), userInfo: nil, repeats: true)
+            updateCounter()
+        } else if recievedLightningRoundOn == false {
+            countDownLabel.isHidden = true
         }
     }
+    
+    // Make the timer count down 
     
     func updateCounter() {
         if count > 0 {
             count -= 1
         }
+        
         countDownLabel.text = "\(count)"
+        if count == 0 {
+            checkAnswer(nil)
+        }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
+    // Update the views to display the next question and possible answers, and count down label.
     
     func displayQuestion() {
-       
+       if recievedLightningRoundOn == true {
+            countDownLabel.isHidden = false
+        }
+        
+        // If the last question in a previous round was a 3 options question, updates the contraints back to 30 points
+        
         self.view.layoutIfNeeded()
         UIView.animate(withDuration: 0, animations: {
             self.option2Constraint.constant = 30
             self.view.layoutIfNeeded()
         })
+        
         UIView.animate(withDuration: 0, animations: {
             self.option3Constraint.constant = 30
             self.view.layoutIfNeeded()
         })
        
-        
-    // firstRound isEmpty then do it without checking array
+        // The first round requires no check if a number has been drawn before
        
         if questionsAskedArray.isEmpty {
         
@@ -79,91 +102,104 @@ class ViewController: UIViewController {
             
             let questionDictionary = trivia[indexOfSelectedQuestion]
             
-            // If has 3 options
+            // If question has 3 options update views and constraints
+           
             if questionDictionary.option4 == "No answer" {
                 questionField.text = questionDictionary.question
                 option1Button.setTitle(questionDictionary.option1, for: .normal)
                 option2Button.setTitle(questionDictionary.option2, for: .normal)
                 option3Button.setTitle(questionDictionary.option3, for: .normal)
                 option4Button.setTitle(questionDictionary.option4, for: .normal)
-                
+                playAgainButton.isHidden = true
                 self.view.layoutIfNeeded()
                 UIView.animate(withDuration: 0, animations: {
                   self.option2Constraint.constant = 40
                     self.view.layoutIfNeeded()
                 })
+                
                 UIView.animate(withDuration: 0, animations: {
                     self.option3Constraint.constant = 40
                     self.view.layoutIfNeeded()
                 })
+                
                 option4Button.isHidden = true
-                
+          
+            // If questions has 4 options only update text
+            
             } else {
-                
-            questionField.text = questionDictionary.question
-            option1Button.setTitle(questionDictionary.option1, for: .normal)
-            option2Button.setTitle(questionDictionary.option2, for: .normal)
-            option3Button.setTitle(questionDictionary.option3, for: .normal)
-            option4Button.setTitle(questionDictionary.option4, for: .normal)
-            option4Button.isHidden = false
-            playAgainButton.isHidden = true
+                questionField.text = questionDictionary.question
+                option1Button.setTitle(questionDictionary.option1, for: .normal)
+                option2Button.setTitle(questionDictionary.option2, for: .normal)
+                option3Button.setTitle(questionDictionary.option3, for: .normal)
+                option4Button.setTitle(questionDictionary.option4, for: .normal)
+                option4Button.isHidden = false
+                playAgainButton.isHidden = true
             }
-       // secondThroughEndRounds isEmpty == false then check array and go from there.
+            
+        // Check to see if a question has been used, if it has repeat picking index until I find one that hasn't been used
         
         } else if questionsAskedArray.isEmpty == false {
-            
             repeat {
                 indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextInt(upperBound: trivia.count)
-            
             } while questionsAskedArray.contains(indexOfSelectedQuestion)
+                questionsAskedArray.append(indexOfSelectedQuestion)
+                let questionDictionary = trivia[indexOfSelectedQuestion]
             
-            questionsAskedArray.append(indexOfSelectedQuestion)
+            // If question has 3 options
             
-            let questionDictionary = trivia[indexOfSelectedQuestion]
-            // If has 3 options
             if questionDictionary.option4 == "No answer" {
                 questionField.text = questionDictionary.question
                 option1Button.setTitle(questionDictionary.option1, for: .normal)
                 option2Button.setTitle(questionDictionary.option2, for: .normal)
                 option3Button.setTitle(questionDictionary.option3, for: .normal)
                 option4Button.setTitle(questionDictionary.option4, for: .normal)
-                
                 self.view.layoutIfNeeded()
                 UIView.animate(withDuration: 0, animations: {
                     self.option2Constraint.constant = 40
                     self.view.layoutIfNeeded()
                 })
+                
                 UIView.animate(withDuration: 0, animations: {
                     self.option3Constraint.constant = 40
                     self.view.layoutIfNeeded()
                 })
+                
                 option4Button.isHidden = true
                 
+            // If quesiton has 4 options
                 
             } else {
-            
                 questionField.text = questionDictionary.question
-            option1Button.setTitle(questionDictionary.option1, for: .normal)
-            option2Button.setTitle(questionDictionary.option2, for: .normal)
-            option3Button.setTitle(questionDictionary.option3, for: .normal)
-            option4Button.setTitle(questionDictionary.option4, for: .normal)
-            option4Button.isHidden = false
-            playAgainButton.isHidden = true
-            }
+                option1Button.setTitle(questionDictionary.option1, for: .normal)
+                option2Button.setTitle(questionDictionary.option2, for: .normal)
+                option3Button.setTitle(questionDictionary.option3, for: .normal)
+                option4Button.setTitle(questionDictionary.option4, for: .normal)
+                option4Button.isHidden = false
+                playAgainButton.isHidden = true
+           }
         }
     }
     
-    
+    // All questions have been asked
     
     func displayScore() {
+        
+        // No need for timer so turn it off
+        
+        timer?.invalidate()
+        
         // Hide the answer buttons
+       
         option1Button.isHidden = true
         option2Button.isHidden = true
         option3Button.isHidden = true
-        if option4Button.isHidden != true  {
-            option4Button.isHidden = true
-        }
-        // Display play again button
+        
+        // Display play again buttons
+        
+        option4Button.isHidden = false
+        option4Button.tintColor = .white
+        option4Button.backgroundColor = #colorLiteral(red: 0, green: 0.5764705882, blue: 0.5294117647, alpha: 1)
+        option4Button.setTitle("Play Lightning Round", for: .normal)
         playAgainButton.isHidden = false
         
         if correctQuestions >= 7 {
@@ -171,94 +207,102 @@ class ViewController: UIViewController {
         } else if correctQuestions < 7 {
             questionField.text = "You got \(correctQuestions) out of \(questionsPerRound) correct!"
         }
-        
     }
     
-    @IBAction func checkAnswer(_ sender: UIButton) {
-        
-        let question = trivia[indexOfSelectedQuestion].question
+    // Checking to see if a answer is correct or if the timer has run out.
+    
+    @IBAction func checkAnswer(_ sender: UIButton?) {
+                let question = trivia[indexOfSelectedQuestion].question
         let triviaAnswers = trivia[indexOfSelectedQuestion]
        // Sorting correct answers from false maybe I should do this in model?
        
-        if question == "LeBron James is the _ best player of all time." {
-            if sender == option1Button {
-                questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option2Button || sender == option3Button || sender == option4Button {
-               questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
-            }
-        } else if question == "Shaq played for which of these teams?" {
-            if sender == option1Button {
-                questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option2Button || sender == option3Button || sender == option4Button {
+        if option1Button.isHidden == false {
+            if question == "LeBron James is the _ best player of all time." {
+                if sender == option1Button {
+                    questionField.text = "Correct!"
+                    correctQuestions += 1
+                    playWrongAnswerSound()
+                } else if sender == option2Button || sender == option3Button || sender == option4Button || count == 0 {
                 questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
-            }
-        } else if question == "Steve Nash was MVP _ times." {
-            if sender == option2Button {
+                    playWrongAnswerSound()
+                }
+            } else if question == "Shaq played for which of these teams?" {
+                if sender == option1Button {
+                    questionField.text = "Correct!"
+                    correctQuestions += 1
+                } else if sender == option2Button || sender == option3Button || sender == option4Button || count == 0 {
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
+                    playWrongAnswerSound()
+                }
+            } else if question == "Steve Nash was MVP _ times." {
+                if sender == option2Button {
                 questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option1Button || sender == option3Button || sender == option4Button {
-               questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"
-            }
-        } else if question == "Damian Lillard went to which school in Utah?" {
-            if sender == option2Button {
-                questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option1Button || sender == option3Button || sender == option4Button {
+                    correctQuestions += 1
+                } else if sender == option1Button || sender == option3Button || sender == option4Button || count == 0 {
                 questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"
-            }
-        } else if question == "Jimmer Fredette's highest scoring game is _." {
-            if sender == option1Button {
-                questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option2Button || sender == option3Button || sender == option4Button {
-                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
-            }
-        } else if question == "What college did Michael Jordan play for?" {
-            if sender == option3Button {
-                questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option1Button || sender == option2Button || sender == option4Button {
-                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option3)!"
-            }
-        } else if question == "The Utah Jazz have won how many championships?" {
-            if sender == option4Button {
-                questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option1Button || sender == option2Button || sender == option3Button {
+                }
+            } else if question == "Damian Lillard went to which school in Utah?" {
+                if sender == option2Button {
+                    questionField.text = "Correct!"
+                    correctQuestions += 1
+                } else if sender == option1Button || sender == option3Button || sender == option4Button || count == 0 {
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"
+                }
+            } else if question == "Jimmer Fredette's highest scoring game is _." {
+                if sender == option1Button {
+                    questionField.text = "Correct!"
+                    correctQuestions += 1
+                } else if sender == option2Button || sender == option3Button || sender == option4Button || count == 0 {
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
+                }
+            } else if question == "What college did Michael Jordan play for?" {
+                if sender == option3Button {
+                    questionField.text = "Correct!"
+                    correctQuestions += 1
+                } else if sender == option1Button || sender == option2Button || sender == option4Button || count == 0 {
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option3)!"
+                }
+            } else if question == "The Utah Jazz have won how many championships?" {
+                if sender == option4Button {
+                    questionField.text = "Correct!"
+                    correctQuestions += 1
+                } else if sender == option1Button || sender == option2Button || sender == option3Button || count == 0 {
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option4)!"
+                }
+            } else if question == "Gordon Hayward played for which college?" {
+                if sender == option2Button {
+                    questionField.text = "Correct!"
+                    correctQuestions += 1
+            } else if sender == option1Button || sender == option3Button || sender == option4Button || count == 0 {
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"            }
+            } else if question == "Kobe Bryant has _ rings." {
+                if sender == option4Button {
+                    questionField.text = "Correct!"
+                    correctQuestions += 1
+                } else if sender == option1Button || sender == option2Button || sender == option3Button || count == 0 {
                 questionField.text = "Sorry! The correct answer is \(triviaAnswers.option4)!"
+                }
+            } else if question == "Who is the best player in the world right now?" {
+                if sender == option3Button {
+                    questionField.text = "Correct!"
+                    correctQuestions += 1
+                } else if sender == option1Button || sender == option2Button || count == 0 {
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option3)!"
+                }
+            } else {
+                return
             }
-        } else if question == "Gordon Hayward played for which college?" {
-            if sender == option2Button {
-                questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option1Button || sender == option3Button || sender == option4Button {
-                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"            }
-        } else if question == "Kobe Bryant has _ rings." {
-            if sender == option4Button {
-                questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option1Button || sender == option2Button || sender == option3Button {
-                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option4)!"
-            }
-        } else if question == "Who is the best player in the world right now?" {
-            if sender == option3Button {
-                questionField.text = "Correct!"
-                correctQuestions += 1
-            } else if sender == option1Button || sender == option2Button {
-                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option3)!"
-            }
-        } else {
-            return
+            
+            loadNextRoundWithDelay(seconds: 2)
         }
-        
-      loadNextRoundWithDelay(seconds: 2)
     }
     
+    // Logic for bringing up next question
+    
     func nextRound() {
-        
+       
         questionsAsked += 1
+        countDownLabel.isHidden = true
         
         if questionsAsked == questionsPerRound {
             // Game is over
@@ -268,14 +312,14 @@ class ViewController: UIViewController {
             // Continue game
             displayQuestion()
         }
-        
         questionsAskedArray.append(indexOfSelectedQuestion)
-        
-        
-        
     }
     
+   // Logic for playing game a second time in lightning or normal mode
+    
     @IBAction func playAgain() {
+        
+        recievedLightningRoundOn = false
         
         questionsAskedArray = []
         // Show the answer buttons
@@ -283,18 +327,45 @@ class ViewController: UIViewController {
         option2Button.isHidden = false
         option3Button.isHidden = false
         option4Button.isHidden = false
+        option4Button.backgroundColor = #colorLiteral(red: 0.04705882353, green: 0.4745098039, blue: 0.5882352941, alpha: 1)
         
         questionsAsked = 0
         correctQuestions = 0
         nextRound()
-        
-        
+    }
+    
+    @IBAction func playLightningRound(_ sender: Any) {
+        if option2Button.isHidden == true {
+            recievedLightningRoundOn = true
+            questionsAskedArray = []
+            
+            // Show the answer buttons
+            
+            option1Button.isHidden = false
+            option2Button.isHidden = false
+            option3Button.isHidden = false
+            option4Button.isHidden = false
+            option4Button.backgroundColor = #colorLiteral(red: 0.04705882353, green: 0.4745098039, blue: 0.5882352941, alpha: 1)
+            
+            questionsAsked = 0
+            correctQuestions = 0
+            nextRound()
+            
+            // Timer is invalidated so I need to remake it.
+            
+            timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCounter), userInfo: nil, repeats: true)
+            updateCounter()
+        }
     }
     
 
     // MARK: Helper Methods
     
     func loadNextRoundWithDelay(seconds: Int) {
+        count = 18
+        countDownLabel.isHidden = true
+       
+     
         // Converts a delay in seconds to nanoseconds as signed 64 bit integer
         let delay = Int64(NSEC_PER_SEC * UInt64(seconds))
         // Calculates a time value to execute the method given current time and delay
@@ -303,8 +374,12 @@ class ViewController: UIViewController {
         // Executes the nextRound method at the dispatch time on the main queue
         DispatchQueue.main.asyncAfter(deadline: dispatchTime) {
             self.nextRound()
+            self.updateCounter()
+            
         }
     }
+    
+    // Sounds
     
     func loadGameStartSound() {
         let pathToSoundFile = Bundle.main.path(forResource: "GameSound", ofType: "wav")
@@ -312,8 +387,26 @@ class ViewController: UIViewController {
         AudioServicesCreateSystemSoundID(soundURL as CFURL, &gameSound)
     }
     
+    func loadRightAnswerSound() {
+        
+    }
+    
+    func loadWrongAnswerSound() {
+        let pathToSoundFile = Bundle.main.path(forResource: "wrongSound", ofType: "wav")
+        let soundURL = URL(fileURLWithPath: pathToSoundFile!)
+        AudioServicesCreateSystemSoundID(soundURL as CFURL, &wrongAnswerSound)
+    }
+    
     func playGameStartSound() {
         AudioServicesPlaySystemSound(gameSound)
+    }
+    
+    func playRightAnswerSound() {
+        
+    }
+    
+    func playWrongAnswerSound() {
+        AudioServicesPlaySystemSound(wrongAnswerSound)
     }
 }
 
