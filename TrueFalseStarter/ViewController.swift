@@ -9,6 +9,7 @@
 import UIKit
 import GameKit
 import AudioToolbox
+import AVFoundation
 
 class ViewController: UIViewController {
     
@@ -21,6 +22,7 @@ class ViewController: UIViewController {
     var questionsAskedArray: [Int] = []
     var count = 16
     var gameSound: SystemSoundID = 0
+    var audioPlayer = AVAudioPlayer()
     var wrongAnswerSound: SystemSoundID = 0
     var rightSound: SystemSoundID = 0
     let trivia = Trivia().questionsArray
@@ -221,7 +223,7 @@ class ViewController: UIViewController {
                 if sender == option1Button {
                     questionField.text = "Correct!"
                     correctQuestions += 1
-                    playWrongAnswerSound()
+                    playRightAnswerSound()
                 } else if sender == option2Button || sender == option3Button || sender == option4Button || count == 0 {
                 questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
                     playWrongAnswerSound()
@@ -230,64 +232,81 @@ class ViewController: UIViewController {
                 if sender == option1Button {
                     questionField.text = "Correct!"
                     correctQuestions += 1
+                    playRightAnswerSound()
                 } else if sender == option2Button || sender == option3Button || sender == option4Button || count == 0 {
                     questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
                     playWrongAnswerSound()
                 }
             } else if question == "Steve Nash was MVP _ times." {
                 if sender == option2Button {
-                questionField.text = "Correct!"
+                    questionField.text = "Correct!"
                     correctQuestions += 1
+                    playRightAnswerSound()
                 } else if sender == option1Button || sender == option3Button || sender == option4Button || count == 0 {
-                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"
+                    playWrongAnswerSound()
                 }
             } else if question == "Damian Lillard went to which school in Utah?" {
                 if sender == option2Button {
                     questionField.text = "Correct!"
                     correctQuestions += 1
+                    playRightAnswerSound()
                 } else if sender == option1Button || sender == option3Button || sender == option4Button || count == 0 {
                     questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"
+                    playWrongAnswerSound()
                 }
             } else if question == "Jimmer Fredette's highest scoring game is _." {
                 if sender == option1Button {
                     questionField.text = "Correct!"
                     correctQuestions += 1
+                    playRightAnswerSound()
                 } else if sender == option2Button || sender == option3Button || sender == option4Button || count == 0 {
                     questionField.text = "Sorry! The correct answer is \(triviaAnswers.option1)!"
+                    playWrongAnswerSound()
                 }
             } else if question == "What college did Michael Jordan play for?" {
                 if sender == option3Button {
                     questionField.text = "Correct!"
                     correctQuestions += 1
+                    playRightAnswerSound()
                 } else if sender == option1Button || sender == option2Button || sender == option4Button || count == 0 {
                     questionField.text = "Sorry! The correct answer is \(triviaAnswers.option3)!"
+                    playWrongAnswerSound()
                 }
             } else if question == "The Utah Jazz have won how many championships?" {
                 if sender == option4Button {
                     questionField.text = "Correct!"
                     correctQuestions += 1
+                    playRightAnswerSound()
                 } else if sender == option1Button || sender == option2Button || sender == option3Button || count == 0 {
                     questionField.text = "Sorry! The correct answer is \(triviaAnswers.option4)!"
+                    playWrongAnswerSound()
                 }
             } else if question == "Gordon Hayward played for which college?" {
                 if sender == option2Button {
                     questionField.text = "Correct!"
                     correctQuestions += 1
+                    playRightAnswerSound()
             } else if sender == option1Button || sender == option3Button || sender == option4Button || count == 0 {
-                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"            }
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option2)!"
+                    playWrongAnswerSound() }
             } else if question == "Kobe Bryant has _ rings." {
                 if sender == option4Button {
                     questionField.text = "Correct!"
                     correctQuestions += 1
+                    playRightAnswerSound()
                 } else if sender == option1Button || sender == option2Button || sender == option3Button || count == 0 {
-                questionField.text = "Sorry! The correct answer is \(triviaAnswers.option4)!"
+                    questionField.text = "Sorry! The correct answer is \(triviaAnswers.option4)!"
+                    playWrongAnswerSound()
                 }
             } else if question == "Who is the best player in the world right now?" {
                 if sender == option3Button {
                     questionField.text = "Correct!"
                     correctQuestions += 1
+                    playRightAnswerSound()
                 } else if sender == option1Button || sender == option2Button || count == 0 {
                     questionField.text = "Sorry! The correct answer is \(triviaAnswers.option3)!"
+                    playWrongAnswerSound()
                 }
             } else {
                 return
@@ -387,14 +406,18 @@ class ViewController: UIViewController {
         AudioServicesCreateSystemSoundID(soundURL as CFURL, &gameSound)
     }
     
-    func loadRightAnswerSound() {
-        
-    }
     
-    func loadWrongAnswerSound() {
-        let pathToSoundFile = Bundle.main.path(forResource: "wrongSound", ofType: "wav")
-        let soundURL = URL(fileURLWithPath: pathToSoundFile!)
-        AudioServicesCreateSystemSoundID(soundURL as CFURL, &wrongAnswerSound)
+    func playWrongAnswerSound() {
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: URL.init(fileURLWithPath: Bundle.main.path(forResource: "BuzzerBeep", ofType: ".wav")!))
+            audioPlayer.prepareToPlay()
+        }
+        
+        catch {
+            print(error)
+        }
+        
+        audioPlayer.play()
     }
     
     func playGameStartSound() {
@@ -402,11 +425,16 @@ class ViewController: UIViewController {
     }
     
     func playRightAnswerSound() {
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: URL.init(fileURLWithPath: Bundle.main.path(forResource: "GasStationBell", ofType: ".wav")!))
+            audioPlayer.prepareToPlay()
+        }
+            
+        catch {
+            print(error)
+        }
         
-    }
-    
-    func playWrongAnswerSound() {
-        AudioServicesPlaySystemSound(wrongAnswerSound)
+        audioPlayer.play()
     }
 }
 
